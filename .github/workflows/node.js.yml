@@ -1,0 +1,29 @@
+# This workflow will build and test your Node.js project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ] # Trigger on pushes to the main branch
+  pull_request:
+    branches: [ "main" ] # Trigger on pull requests to the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # Run the job on the latest version of Ubuntu
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x] # Test against different Node.js versions
+
+    steps:
+    - uses: actions/checkout@v4 # Checkout your code
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4 # Set up Node.js
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm' # Cache npm dependencies
+    - run: npm ci # Install dependencies using npm ci (clean install)
+    - run: npm run build --if-present # Run build script if it exists
+    - run: npm test # Run your tests
